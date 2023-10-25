@@ -234,6 +234,8 @@ def detect_static_linker(env: 'Environment', compiler: Compiler) -> StaticLinker
             return linkers.CcrxLinker(linker)
         if out.startswith('GNU ar') and 'xc16-ar' in linker_name:
             return linkers.Xc16Linker(linker)
+        if out.startswith('GNU ar') and 'sdar' in linker_name:
+            return linkers.SdarLinker(compiler.for_machine, linker)
         if 'Texas Instruments Incorporated' in out:
             if 'ar2000' in linker_name:
                 return linkers.C2000Linker(linker)

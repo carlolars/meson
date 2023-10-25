@@ -367,6 +367,14 @@ def _detect_c_or_cpp_compiler(env: 'Environment', lang: str, for_machine: Machin
                 info, exe_wrap, defines=defines, full_version=full_version,
                 linker=linker)
 
+        if 'SDCC' in out:
+            cls = c.SdccCCompiler
+            env.coredata.add_lang_args(cls.language, cls, for_machine, env)
+
+            return cls(
+                ccache, compiler, version, for_machine, is_cross, info,
+                exe_wrap, linker=linker, full_version=full_version)
+
         if 'Emscripten' in out:
             cls = c.EmscriptenCCompiler if lang == 'c' else cpp.EmscriptenCPPCompiler
             env.coredata.add_lang_args(cls.language, cls, for_machine, env)

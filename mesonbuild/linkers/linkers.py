@@ -529,6 +529,17 @@ class MetrowerksStaticLinkerARM(MetrowerksStaticLinker):
 class MetrowerksStaticLinkerEmbeddedPowerPC(MetrowerksStaticLinker):
     id = 'mwldeppc'
 
+class SdarLinker(ArLinker):
+    id = 'sdar'
+
+    def __init__(self, for_machine: mesonlib.MachineChoice, exelist: T.List[str]):
+        super().__init__(for_machine, exelist)
+
+        stdargs = 'cr'
+
+        self.std_args = [stdargs]
+        self.std_thin_args = [stdargs]
+
 def prepare_rpaths(raw_rpaths: T.Tuple[str, ...], build_dir: str, from_dir: str) -> T.List[str]:
     # The rpaths we write must be relative if they point to the build dir,
     # because otherwise they have different length depending on the build

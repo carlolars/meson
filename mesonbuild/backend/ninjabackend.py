@@ -3361,7 +3361,7 @@ https://gcc.gnu.org/bugzilla/show_bug.cgi?id=47485'''))
         #
         # Once all the linker options have been passed, we will start passing
         # libraries and library paths from internal and external sources.
-        commands = linker.compiler_args()
+        commands = linker.linker_args()
         # First, the trivial ones that are impossible to override.
         #
         # Add linker args for linking this target derived from 'base' build

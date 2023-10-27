@@ -29,7 +29,7 @@ from ..mesonlib import (
     Popen_safe_logged, LibType, TemporaryDirectoryWinProof, OptionKey,
 )
 
-from ..arglist import CompilerArgs
+from ..arglist import CompilerArgs, LinkerArgs
 
 if T.TYPE_CHECKING:
     from ..build import BuildTarget, DFeatures
@@ -825,6 +825,19 @@ class Compiler(HoldableObject, metaclass=abc.ABCMeta):
     def compiler_args(self, args: T.Optional[T.Iterable[str]] = None) -> CompilerArgs:
         """Return an appropriate CompilerArgs instance for this class."""
         return CompilerArgs(self, args)
+
+    def linker_args(self, args: T.Optional[T.Iterable[str]] = None) -> LinkerArgs:
+        """Return an appropriate CompilerArgs instance for the the linker.
+
+        If the linker has no CompilerArgs then the CompilerArgs for this compiler
+        instance will be used.
+        """
+        linker_args = self.linker.linker_args(args)
+
+        if linker_args is None:
+            linker_args = self.compiler_args(args)
+
+        return linker_args
 
     @contextlib.contextmanager
     def compile(self, code: 'mesonlib.FileOrString',

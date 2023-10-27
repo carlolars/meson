@@ -1639,3 +1639,91 @@ class MetrowerksLinkerARM(MetrowerksLinker):
 
 class MetrowerksLinkerEmbeddedPowerPC(MetrowerksLinker):
     id = 'mwldeppc'
+
+class SdldLinkerArgs(LinkerArgs):
+    """sdld linker arguments"""
+    prepend_prefixes = ()
+    dedup2_prefixes = ()
+    dedup2_suffixes = ()
+    dedup2_args = ()
+
+    dedup1_suffixes = ()
+    # dedup1_regex =
+    dedup1_args = ()
+
+    def to_native(self, copy: bool = False) -> T.List[str]:
+        self.flush_pre_post()
+        if copy:
+            new = self.copy()
+        else:
+            new = self
+
+        return self.compiler.unix_args_to_native(new._container)
+
+class SdldDynamicLinker(DynamicLinker):
+
+    id = 'sdld'
+
+    def __init__(self, exelist: T.List[str], for_machine: mesonlib.MachineChoice,
+                 *, version: str = 'unknown version'):
+        super().__init__(exelist, for_machine, '', [],
+                         version=version)
+
+    def fatal_warnings(self) -> T.List[str]:
+        return []
+
+    def get_allow_undefined_args(self) -> T.List[str]:
+        return []
+
+    def get_accepts_rsp(self) -> bool:
+        return False
+
+    def get_lib_prefix(self) -> str:
+        return '-l'
+
+    def get_always_args(self) -> T.List[str]:
+        parent = super().get_always_args()
+        return self._apply_prefix('-n') + parent
+
+    def get_linker_always_args(self) -> T.List[str]:
+        return []
+
+    def get_output_args(self, target: str) -> T.List[str]:
+        return [target]
+
+    def get_search_args(self, dirname: str) -> T.List[str]:
+        return ['-k', dirname]
+
+    def invoked_by_compiler(self) -> bool:
+        return False
+
+    def linker_args(self, args: T.Optional[T.Iterable[str]] = None) -> LinkerArgs:
+        return SdldLinkerArgs(self, args)
+
+    @classmethod
+    def unix_args_to_native(cls, args: T.List[str]) -> T.List[str]:
+        fixed_args: T.List[str] = []
+        libs: T.List[str] = []
+
+        is_lib = False
+
+        for arg in args:
+            if is_lib:
+                libs.append(arg)
+                is_lib = False
+                continue
+
+            if arg.startswith('-l'):
+                # libs (-l) must be after lib search paths (-k)
+                if len(arg) > 2:
+                    # split '-lname' into '-l' and 'name'
+                    libs.append(arg[:2])
+                    libs.append(arg[2:])
+                else:
+                    libs.append(arg)
+                    is_lib = True
+                    continue
+            else:
+                fixed_args.append(arg)
+
+        return fixed_args + libs

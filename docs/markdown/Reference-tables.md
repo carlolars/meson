@@ -34,6 +34,7 @@ These are return values of the `get_id` (Compiler family) and
 | pathscale | The Pathscale Fortran compiler   |                 |
 | pgi       | Portland PGI C/C++/Fortran compilers |             |
 | rustc     | Rust compiler                    |                 |
+| sdcc      | Small Device C Compiler          |                 |
 | sun       | Sun Fortran compiler             |                 |
 | c2000     | Texas Instruments C/C++ Compiler (C2000) |                 |
 | ti        | Texas Instruments C/C++ Compiler |                 |
@@ -75,6 +76,7 @@ These are return values of the `get_linker_id` method in a compiler object.
 | ccomp      | CompCert used as the linker driver          |
 | mwldarm    | The Metrowerks Linker with the ARM interface, used with mwccarm only |
 | mwldeppc   | The Metrowerks Linker with the PowerPC interface, used with mwcceppc only |
+| sdld       | The SDCC linker                             |
 
 For languages that don't have separate dynamic linkers such as C# and Java, the
 `get_linker_id` will return the compiler name.
@@ -110,6 +112,7 @@ set in the cross file.
 | ia64                | Itanium processor        |
 | loongarch64         | 64 bit Loongson processor|
 | m68k                | Motorola 68000 processor |
+| mcs51               | Intel MCS-51 processor (aka 8051) |
 | microblaze          | MicroBlaze processor     |
 | mips                | 32 bit MIPS processor    |
 | mips64              | 64 bit MIPS processor    |

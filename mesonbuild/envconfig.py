@@ -51,6 +51,7 @@ known_cpu_families = (
     'ia64',
     'loongarch64',
     'm68k',
+    'mcs51',
     'microblaze',
     'mips',
     'mips64',

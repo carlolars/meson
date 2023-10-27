@@ -26,6 +26,28 @@ from ... import mesonlib
 from ...mesonlib import EnvironmentException, OptionKey
 from ..compilers import CompileCheckMode, Compiler
 from ...environment import Environment
+from ...arglist import CompilerArgs
+
+class SdccCompilerArgs(CompilerArgs):
+    prepend_prefixes = ('-I', '-L')
+
+    dedup2_prefixes = ('-I', '-L', '-D', '-U')
+
+    dedup1_prefixes = ('-l', '-Wl')
+    dedup1_suffixes = ()
+    dedup1_args = ('-c', '-S', '-E')
+
+    def to_native(self, copy: bool = False) -> T.List[str]:
+        # This seems to be allowed, but could never work?
+        assert isinstance(self.compiler, Compiler), 'How did you get here'
+
+        self.flush_pre_post()
+        if copy:
+            new = self.copy()
+        else:
+            new = self
+
+        return self.compiler.unix_args_to_native(new._container)
 
 class SdccCompiler(Compiler):
 
@@ -192,3 +214,6 @@ class SdccCompiler(Compiler):
             raise mesonlib.EnvironmentException(f'Could not invoke sanity test executable: {e!s}.')
         if pe.returncode != 0:
             raise mesonlib.EnvironmentException(f'Executables created by {self.language} compiler {self.name_string()} are not runnable.')
+
+    def compiler_args(self, args: T.Optional[T.Iterable[str]] = None) -> SdccCompilerArgs:
+        return SdccCompilerArgs(self, args)

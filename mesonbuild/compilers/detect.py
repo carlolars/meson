@@ -373,6 +373,21 @@ def _detect_c_or_cpp_compiler(env: 'Environment', lang: str, for_machine: Machin
             cls = c.SdccCCompiler
             env.coredata.add_lang_args(cls.language, cls, for_machine, env)
 
+            try:
+                _, _, err = Popen_safe(['sdld'])
+            except OSError as e:
+                popen_exceptions[ld] = e
+
+            # example: sdld Linker V03.00/V05.40 + sdld
+            version_regex = re.compile(r"sdld Linker (V\d+\.\d+/V\d+\.\d+)")
+            match = version_regex.search(err)
+            if match:
+                linker_version = match.group(1)
+            else:
+                linker_version = 'unknown version'
+
+            linker = linkers.SdldDynamicLinker(['sdld'], for_machine, version=linker_version)
+
             return cls(
                 ccache, compiler, version, for_machine, is_cross, info,
                 exe_wrap, linker=linker, full_version=full_version)

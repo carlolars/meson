@@ -21,7 +21,7 @@ import re
 from .base import ArLikeLinker, RSPFileSyntax
 from .. import mesonlib
 from ..mesonlib import EnvironmentException, MesonException
-from ..arglist import CompilerArgs
+from ..arglist import CompilerArgs, LinkerArgs
 
 if T.TYPE_CHECKING:
     from ..coredata import KeyedOptionDictType
@@ -108,6 +108,8 @@ class StaticLinker:
         assert not self.can_linker_accept_rsp(), f'{self.id} linker accepts RSP, but doesn\' provide a supported format, this is a bug'
         raise EnvironmentException(f'{self.id} does not implement rsp format, this shouldn\'t be called')
 
+    def linker_args(self, args: T.Optional[T.Iterable[str]] = None) -> LinkerArgs:
+        return self.compiler_args(args)
 
 class VisualStudioLikeLinker:
     always_args = ['/NOLOGO']
@@ -564,6 +566,18 @@ class DynamicLinker(metaclass=abc.ABCMeta):
     def get_command_to_archive_shlib(self) -> T.List[str]:
         #Only used by AIX.
         return []
+
+    @classmethod
+    def unix_args_to_native(cls, args: T.List[str]) -> T.List[str]:
+        return args[:]
+
+    @classmethod
+    def native_args_to_unix(cls, args: T.List[str]) -> T.List[str]:
+        return args[:]
+
+    def linker_args(self, args: T.Optional[T.Iterable[str]] = None) -> LinkerArgs:
+        """Return an appropriate LinkerArgs instance for the this class, or None."""
+        return None
 
 
 class PosixDynamicLinkerMixin:

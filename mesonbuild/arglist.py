@@ -22,7 +22,7 @@ import re
 import typing as T
 
 if T.TYPE_CHECKING:
-    from .linkers.linkers import StaticLinker
+    from .linkers.linkers import DynamicLinker, StaticLinker
     from .compilers import Compiler
 
 # execinfo is a compiler lib on BSD
@@ -104,7 +104,7 @@ class CompilerArgs(T.MutableSequence[str]):
     # TODO: these should probably move too
     always_dedup_args = tuple('-l' + lib for lib in UNIXY_COMPILER_INTERNAL_LIBS)  # type : T.Tuple[str, ...]
 
-    def __init__(self, compiler: T.Union['Compiler', 'StaticLinker'],
+    def __init__(self, compiler: T.Union['Compiler', 'StaticLinker', 'DynamicLinker'],
                  iterable: T.Optional[T.Iterable[str]] = None):
         self.compiler = compiler
         self._container = list(iterable) if iterable is not None else []  # type: T.List[str]
@@ -329,3 +329,5 @@ class CompilerArgs(T.MutableSequence[str]):
     def __repr__(self) -> str:
         self.flush_pre_post()
         return f'CompilerArgs({self.compiler!r}, {self._container!r})'
+
+LinkerArgs = CompilerArgs

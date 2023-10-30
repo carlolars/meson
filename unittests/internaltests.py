@@ -243,6 +243,9 @@ class InternalTests(unittest.TestCase):
         a = cc.compiler_args(cc.get_always_args() + ['/validate-charset-'])
         self.assertEqual(a.to_native(copy=True), ['/nologo', '/showIncludes', '/Zc:__cplusplus', '/validate-charset-'])
 
+    def test_compiler_args_class_sdcc(self):
+        pass
+
 
     def test_compiler_args_class_gnuld(self):
         ## Test --start/end-group
@@ -284,6 +287,9 @@ class InternalTests(unittest.TestCase):
         ## Test that to_native removes all system includes
         l += ['-isystem/usr/include', '-isystem=/usr/share/include', '-DSOMETHING_IMPORTANT=1', '-isystem', '/usr/local/include']
         self.assertEqual(l.to_native(copy=True), ['-Lfoodir', '-Wl,--start-group', '-lfoo', '-Wl,--end-group', '-DSOMETHING_IMPORTANT=1'])
+
+    def test_compiler_args_class_sdld(self):
+        pass
 
     def test_string_templates_substitution(self):
         dictfunc = mesonbuild.mesonlib.get_filenames_templates_dict
@@ -1544,7 +1550,7 @@ class InternalTests(unittest.TestCase):
         _(None, mock.Mock(), [['']], {'input': ['']})
         self.assertRaises(InvalidArguments, _, None, mock.Mock(), [], {'input': 42})
 
-    def test_detect_cpu_family(self) -> None:
+    def test_detect_cpu_family(self) -> None:   # TODO?
         """Test the various cpu families that we detect and normalize.
 
         This is particularly useful as both documentation, and to keep testing
@@ -1613,7 +1619,7 @@ class InternalTests(unittest.TestCase):
                     actual = mesonbuild.environment.detect_cpu_family({})
                     self.assertEqual(actual, expected)
 
-    def test_detect_cpu(self) -> None:
+    def test_detect_cpu(self) -> None:  # TODO?
 
         @contextlib.contextmanager
         def mock_trial(value: str) -> T.Iterable[None]:

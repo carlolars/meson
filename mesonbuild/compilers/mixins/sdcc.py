@@ -217,3 +217,6 @@ class SdccCompiler(Compiler):
 
     def compiler_args(self, args: T.Optional[T.Iterable[str]] = None) -> SdccCompilerArgs:
         return SdccCompilerArgs(self, args)
+
+    def get_dependency_gen_args(self, outtarget: str, outfile: str) -> T.List[str]:
+        return ['-Wp', '-MD,-MF,' + outfile + ',-MQ,' + outtarget]
